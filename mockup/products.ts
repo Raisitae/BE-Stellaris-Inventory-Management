@@ -13,5 +13,20 @@ export default [
     "id": "56e6350d-2f41-44af-a46d-c5b232dadf7b",
     "name": "Product 3",
     "price": 300
+  },
+  {
+    "id": "b620e4c5-025d-446b-89b7-35fdae798626",
+    "name": "Producto nuevo desde el front end",
+    "price": 200
+  },
+  {
+    "id": "4be3b4b4-378a-4852-8351-1539ec0573a9",
+    "name": "Otro producto ",
+    "price": 600
+  },
+  {
+    "id": "077dc757-cd10-46da-9f35-9bd4b054ddd1",
+    "name": "Nuevo Producto",
+    "price": 500
   }
 ];
