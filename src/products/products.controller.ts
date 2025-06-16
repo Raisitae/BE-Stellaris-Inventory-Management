@@ -10,7 +10,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { CreateProductDto } from './dto/create-product.dto';
+import { CreateProductDto, UpdateProductDto } from './dto';
 
 @Controller('products')
 export class ProductsController {
@@ -33,14 +33,14 @@ export class ProductsController {
     return product;
   }
   
-  /*
   @Patch(':id')
-  patchProduct(@Param('id', ParseUUIDPipe) id: string, @Body() body: any) {}
-
-  @Put(':id')
-  putProduct(@Param('id', ParseUUIDPipe) id: string, @Body() body: any) {}
+  patchProduct(@Param('id', ParseUUIDPipe) id: string, @Body() UpdateProductDto: UpdateProductDto) {
+    const product = this.productsService.updateProduct(id, UpdateProductDto);
+    return product;
+  }
 
   @Delete(':id')
-  deleteProduct(@Param('id', ParseUUIDPipe) id: string) {}
-  */
+  deleteProduct(@Param('id', ParseUUIDPipe) id: string) {
+    return this.productsService.deleteProduct(id);
+  }
 }

@@ -28,5 +28,10 @@ export default [
     "id": "077dc757-cd10-46da-9f35-9bd4b054ddd1",
     "name": "Nuevo Producto",
     "price": 500
+  },
+  {
+    "id": "0ab05029-ed95-4c30-8822-d1468146a729",
+    "name": "Nuevo producto!!!",
+    "price": 123
   }
 ];
