@@ -82,4 +82,11 @@ export class SalesService {
     // This will be replaced by a database connection
     writeFile(this.salesFilePath, this.sales);
   }
+
+  populateSalesWithSeedData(sales: Sale[]) {
+    this.sales = sales;
+
+    // This will be replaced by a database connection
+    writeFile(this.salesFilePath, this.sales);
+  }
 }
