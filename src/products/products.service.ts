@@ -14,7 +14,6 @@ import { CreateProductDto, UpdateProductDto } from './dto';
 const writeFile = (productsFilePath: string, products: Product[]) => {
       const fileContent = `export default ${JSON.stringify(products, null, 2)};`;
       fs.writeFileSync(productsFilePath, fileContent);
-
 }
 
 @Injectable()
