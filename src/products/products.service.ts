@@ -1,10 +1,21 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import products from 'mockup/products';
 import { Product } from './interfaces/product.interface';
-import { CreateProductDto } from './dto/create-product.dto';
 import { v4 as uuid } from 'uuid';
 import * as fs from 'fs';
 import * as path from 'path';
+import { CreateProductDto, UpdateProductDto } from './dto';
+
+/**
+ * Write to file preserving the original format
+ * @param productsFilePath - The path to the file to write to
+ * @param products - The products to write to the file
+ */
+const writeFile = (productsFilePath: string, products: Product[]) => {
+      const fileContent = `export default ${JSON.stringify(products, null, 2)};`;
+      fs.writeFileSync(productsFilePath, fileContent);
+
+}
 
 @Injectable()
 export class ProductsService {
@@ -32,10 +43,41 @@ export class ProductsService {
     };
     this.products.push(product);
     
-    // Write to file preserving the original format
-    const fileContent = `export default ${JSON.stringify(this.products, null, 2)};`;
-    fs.writeFileSync(this.productsFilePath, fileContent);
+    // This will be replaced by a database connection
+    writeFile(this.productsFilePath, this.products);
     
     return product;
   }
+
+  updateProduct(id: string, UpdateProductDto: UpdateProductDto) {
+    const productDB = this.findOneById(id);
+
+    if (UpdateProductDto.id && UpdateProductDto.id !== id) {
+      throw new BadRequestException('Product id is not valid inside body');
+    }
+
+    this.products = this.products.map((product: Product) => {
+      if (product.id === id) {
+        const updatedProduct = { ...product, ...UpdateProductDto, id };
+        return updatedProduct;
+      }
+      
+      return product;
+    });
+
+    // This will be replaced by a database connection
+    writeFile(this.productsFilePath, this.products);
+
+    return productDB;
+  }
+
+  deleteProduct(id: string) {
+    const productDB = this.findOneById(id);
+    this.products = this.products.filter((product: Product) => product.id !== id);
+
+    // This will be replaced by a database connection
+    writeFile(this.productsFilePath, this.products);
+
+  }
+
 }
