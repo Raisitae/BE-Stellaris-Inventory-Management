@@ -41,18 +41,16 @@ export class ProductsService {
   }
 
   async updateProduct(_id: string, updateProductDto: UpdateProductDto) {
-    await this.findOneById(_id);
+    const product = await this.findOneById(_id);
     if (updateProductDto.id && updateProductDto.id !== _id) {
       throw new BadRequestException('Product id is not valid inside body');
     }
 
-    const updatedProduct = await this.productModel.findByIdAndUpdate(
-      _id,
-      updateProductDto,
-      { new: true },
-    );
+    await this.productModel.findByIdAndUpdate(_id, updateProductDto, {
+      new: true,
+    });
 
-    return updatedProduct;
+    return { ...product.toJSON(), ...updateProductDto };
   }
 
   async deleteProduct(_id: string) {

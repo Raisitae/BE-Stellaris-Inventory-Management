@@ -13,7 +13,7 @@ export class Product extends Document {
   @Prop()
   imageUrl?: string;
   @Prop()
-  categoryId: string;
+  category: string;
   @Prop()
   platformId: string;
   @Prop()

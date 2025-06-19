@@ -41,19 +41,15 @@ export class SalesService {
   }
 
   async updateSale(_id: string, updateSaleDto: UpdateSaleDto) {
-    await this.findOneById(_id);
+    const sale = await this.findOneById(_id);
 
     if (updateSaleDto.id && updateSaleDto.id !== _id) {
       throw new BadRequestException('Sale id is not valid inside body');
     }
 
-    const updatedSale = await this.saleModel.findByIdAndUpdate(
-      _id,
-      updateSaleDto,
-      { new: true },
-    );
+    await this.saleModel.findByIdAndUpdate(_id, updateSaleDto, { new: true });
 
-    return updatedSale;
+    return { ...sale.toJSON(), ...updateSaleDto };
   }
 
   async deleteSale(_id: string) {

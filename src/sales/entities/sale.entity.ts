@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { SaleItem } from './saleItem.entity';
 import { v4 as uuid } from 'uuid';
+import { Document } from 'mongoose';
 
 @Schema()
 export class Sale extends Document {

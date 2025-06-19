@@ -10,6 +10,8 @@ import {
 export class CreatePlatformDto {
   @IsString()
   @MinLength(1)
+  @IsString()
+  @MinLength(1)
   code: string;
 
   @IsString()

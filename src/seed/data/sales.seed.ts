@@ -1,34 +1,25 @@
-import { Sale } from 'src/sales/entities/sale.entity';
-import { SaleItem } from 'src/sales/entities/saleItem.entity';
 import { v4 as uuid } from 'uuid';
 
-export const SALES_SEED: Sale[] = [
+interface SaleSeed {
+  _id: string;
+  date: Date;
+  total: number;
+  clientName: string;
+  products: any[];
+}
+
+export const SALES_SEED: SaleSeed[] = [
   {
-    id: 'abc1234',
+    _id: uuid(),
     date: new Date(),
     total: 2,
     clientName: 'Client Name',
     products: [],
   },
   {
-    id: uuid(),
+    _id: uuid(),
     date: new Date(),
     total: 100,
-    clientName: 'Client Name',
-    products: [
-      {
-        id: uuid(),
-        saleId: 'abc1234',
-        productId: '1234abc',
-        quantity: 1,
-        unitPrice: 100,
-      },
-    ],
-  },
-  {
-    id: uuid(),
-    date: new Date(),
-    total: 2,
     clientName: 'Client Name',
     products: [],
   },
