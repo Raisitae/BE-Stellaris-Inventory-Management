@@ -1,4 +1,4 @@
-import { Product } from 'src/products/interfaces/product.interface';
+import { Product } from 'src/products/entity/product.interface';
 import { v4 as uuid } from 'uuid';
 
 export const PRODUCT_SEED: Product[] = [

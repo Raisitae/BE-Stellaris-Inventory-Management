@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import products from 'mockup/products';
-import { Product } from './interfaces/product.interface';
+import { Product } from './entity/product.interface';
 import { v4 as uuid } from 'uuid';
 import * as fs from 'fs';
 import * as path from 'path';
