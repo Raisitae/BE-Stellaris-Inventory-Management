@@ -1,13 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Sale } from './entities/sale.entity';
 import * as fs from 'fs';
 import * as path from 'path';
 import { v4 as uuid } from 'uuid';
 import sales from 'mockup/sales';
 import { CreateSaleDto, UpdateSaleDto } from './dto';
-
-
-
 
 /**
  * Write to file preserving the original format
@@ -17,12 +18,11 @@ import { CreateSaleDto, UpdateSaleDto } from './dto';
 const writeFile = (salesFilePath: string, sales: Sale[]) => {
   const fileContent = `export default ${JSON.stringify(sales, null, 2)};`;
   fs.writeFileSync(salesFilePath, fileContent);
-}
+};
 
 @Injectable()
 export class SalesService {
-
-  private sales: Sale[]
+  private sales: Sale[];
   private salesFilePath = path.join(process.cwd(), 'mockup', 'sales.ts');
 
   constructor() {
@@ -38,14 +38,14 @@ export class SalesService {
     const sale: Sale = {
       id: uuid(),
       ...createSaleDto,
-      date: new Date()
+      date: new Date(),
     };
     this.sales.push(sale);
-    
+
     // This will be replaced by a database connection
     writeFile(this.salesFilePath, this.sales);
-    
-    return sale;  
+
+    return sale;
   }
 
   findAll() {
@@ -54,7 +54,8 @@ export class SalesService {
 
   findOneById(id: string) {
     const product = this.sales.find((s: Sale) => s.id === id);
-    if (!product) throw new NotFoundException(`Sale with id '${id}' not found.`);
+    if (!product)
+      throw new NotFoundException(`Sale with id '${id}' not found.`);
     return product;
   }
 
@@ -70,7 +71,7 @@ export class SalesService {
         const updatedProduct = { ...sale, ...updateSaleDto, id };
         return updatedProduct;
       }
-      
+
       return sale;
     });
   }

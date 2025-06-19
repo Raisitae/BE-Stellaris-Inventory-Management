@@ -1,34 +1,48 @@
-import { IsNumber, IsString, MinLength, IsOptional, IsIn } from "class-validator";
+import {
+  IsNumber,
+  IsString,
+  MinLength,
+  IsOptional,
+  IsIn,
+  Min,
+  IsPositive,
+} from 'class-validator';
 
 export class CreateProductDto {
-    @IsString()
-    @MinLength(1)
-    readonly name: string;
+  @IsString()
+  @MinLength(1)
+  name: string;
 
-    @IsString()
-    @IsOptional()
-    readonly description?: string;
+  @IsString()
+  @IsOptional()
+  readonly description?: string;
 
-    @IsString()
-    @IsOptional()
-    readonly imageUrl?: string;
+  @IsString()
+  @IsOptional()
+  readonly imageUrl?: string;
 
-    @IsString()
-    readonly categoryId: string;
+  @IsString()
+  @MinLength(1)
+  readonly categoryId: string;
 
-    @IsString()
-    readonly platformId: string;
+  @IsString()
+  @MinLength(1)
+  readonly platformId: string;
 
-    @IsNumber()
-    readonly price: number;
+  @IsNumber()
+  @IsPositive()
+  @Min(1)
+  readonly price: number;
 
-    @IsNumber()
-    readonly stock: number;
+  @IsNumber()
+  @IsPositive()
+  @Min(1)
+  readonly stock: number;
 
-    @IsIn(['nuevo', 'usado', 'reacondicionado'])
-    readonly status: 'nuevo' | 'usado' | 'reacondicionado';
+  @IsIn(['nuevo', 'usado', 'reacondicionado'])
+  readonly status: 'nuevo' | 'usado' | 'reacondicionado';
 
-    @IsString()
-    @MinLength(1)
-    readonly internCode: string;
+  @IsString()
+  @MinLength(1)
+  readonly internCode: string;
 }

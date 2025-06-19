@@ -12,8 +12,8 @@ export class SeedService {
   ) {}
 
   populateDB() {
-    this.productsService.populateProductsWithSeedData(PRODUCT_SEED);
-    this.salesService.populateSalesWithSeedData(SALES_SEED);
+    //this.productsService.populateProductsWithSeedData(PRODUCT_SEED);
+    //this.salesService.populateSalesWithSeedData(SALES_SEED);
 
     return 'Mockup jsons populated for Product and Sales'
   }
