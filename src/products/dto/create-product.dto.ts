@@ -25,9 +25,13 @@ export class CreateProductDto {
   @IsOptional()
   readonly imageUrl?: string;
 
-  @IsString()
-  @MinLength(1)
-  readonly categoryId: string;
+  @IsIn(['juegos', 'consolas', 'accesorios', 'merchandising', 'otros'])
+  readonly category:
+    | 'juegos'
+    | 'consolas'
+    | 'accesorios'
+    | 'merchandising'
+    | 'otros';
 
   @IsString()
   @MinLength(1)
