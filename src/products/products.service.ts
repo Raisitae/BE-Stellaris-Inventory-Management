@@ -41,6 +41,7 @@ export class ProductsService {
   }
 
   async updateProduct(_id: string, updateProductDto: UpdateProductDto) {
+    await this.findOneById(_id);
     if (updateProductDto.id && updateProductDto.id !== _id) {
       throw new BadRequestException('Product id is not valid inside body');
     }
@@ -51,23 +52,28 @@ export class ProductsService {
       { new: true },
     );
 
-    if (!updatedProduct) {
-      throw new NotFoundException(`Product with id '${_id}' not found.`);
-    }
-
     return updatedProduct;
   }
 
-  async deleteProduct(id: string) {
-    const product = await this.productModel.findByIdAndDelete(id);
-    if (!product) {
-      throw new NotFoundException(`Product with id '${id}' not found.`);
-    }
+  async deleteProduct(_id: string) {
+    await this.findOneById(_id);
+    await this.productModel.findByIdAndDelete(_id);
     return { message: 'Product deleted successfully' };
   }
 
   async populateProductsWithSeedData(products: Product[]) {
-    await this.productModel.insertMany(products);
-    return { message: 'Products seeded successfully' };
+    if (products.length === 0) {
+      throw new BadRequestException('No products to seed');
+    }
+
+    try {
+      await this.productModel.deleteMany({});
+      const createdProducts = await this.productModel.insertMany(products);
+      return createdProducts;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error seeding products data: ${error}`,
+      );
+    }
   }
 }

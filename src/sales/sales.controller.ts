@@ -41,6 +41,6 @@ export class SalesController {
 
   @Delete(':id')
   deleteSale(@Param('id', ParseUUIDPipe) id: string) {
-    return this.salesService.delete(id);
+    return this.salesService.deleteSale(id);
   }
 }
