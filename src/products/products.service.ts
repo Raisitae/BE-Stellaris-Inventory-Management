@@ -30,7 +30,7 @@ export class ProductsService {
   );
 
   constructor() {
-    this.products = products;
+    this.products = products as Product[];
   }
 
   findAll() {
