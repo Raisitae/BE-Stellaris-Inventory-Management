@@ -24,7 +24,6 @@ const writeFile = (salesFilePath: string, sales: Sale[]) => {
 export class SalesService {
   private sales: Sale[];
   private salesFilePath = path.join(process.cwd(), 'mockup', 'sales.ts');
-
   constructor() {
     this.sales = sales;
   }
