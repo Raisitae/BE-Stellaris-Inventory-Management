@@ -6,9 +6,13 @@ import {
   IsIn,
   Min,
   IsPositive,
+  IsUUID,
 } from 'class-validator';
 
 export class CreateProductDto {
+  @IsUUID()
+  uuid: string;
+
   @IsString()
   @MinLength(1)
   name: string;
