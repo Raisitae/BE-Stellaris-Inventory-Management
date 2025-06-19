@@ -1,34 +1,56 @@
-import { IsNumber, IsString, MinLength, IsOptional, IsIn } from "class-validator";
+import {
+  IsNumber,
+  IsString,
+  MinLength,
+  IsOptional,
+  IsIn,
+  Min,
+  IsPositive,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateProductDto {
-    @IsString()
-    @MinLength(1)
-    readonly name: string;
+  @IsUUID()
+  uuid: string;
 
-    @IsString()
-    @IsOptional()
-    readonly description?: string;
+  @IsString()
+  @MinLength(1)
+  name: string;
 
-    @IsString()
-    @IsOptional()
-    readonly imageUrl?: string;
+  @IsString()
+  @IsOptional()
+  readonly description?: string;
 
-    @IsString()
-    readonly categoryId: string;
+  @IsString()
+  @IsOptional()
+  readonly imageUrl?: string;
 
-    @IsString()
-    readonly platformId: string;
+  @IsIn(['juegos', 'consolas', 'accesorios', 'merchandising', 'otros'])
+  readonly category:
+    | 'juegos'
+    | 'consolas'
+    | 'accesorios'
+    | 'merchandising'
+    | 'otros';
 
-    @IsNumber()
-    readonly price: number;
+  @IsString()
+  @MinLength(1)
+  readonly platformId: string;
 
-    @IsNumber()
-    readonly stock: number;
+  @IsNumber()
+  @IsPositive()
+  @Min(1)
+  readonly price: number;
 
-    @IsIn(['nuevo', 'usado', 'reacondicionado'])
-    readonly status: 'nuevo' | 'usado' | 'reacondicionado';
+  @IsNumber()
+  @IsPositive()
+  @Min(1)
+  readonly stock: number;
 
-    @IsString()
-    @MinLength(1)
-    readonly internCode: string;
+  @IsIn(['nuevo', 'usado', 'reacondicionado'])
+  readonly status: 'nuevo' | 'usado' | 'reacondicionado';
+
+  @IsString()
+  @MinLength(1)
+  readonly internCode: string;
 }

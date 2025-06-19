@@ -1,92 +1,72 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Sale } from './entities/sale.entity';
-import * as fs from 'fs';
-import * as path from 'path';
-import { v4 as uuid } from 'uuid';
-import sales from 'mockup/sales';
 import { CreateSaleDto, UpdateSaleDto } from './dto';
-
-
-
-
-/**
- * Write to file preserving the original format
- * @param salesFilePath - The path to the file to write to
- * @param sales - The products to write to the file
- */
-const writeFile = (salesFilePath: string, sales: Sale[]) => {
-  const fileContent = `export default ${JSON.stringify(sales, null, 2)};`;
-  fs.writeFileSync(salesFilePath, fileContent);
-}
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class SalesService {
+  private sales: Sale[];
+  constructor(
+    @InjectModel(Sale.name)
+    private readonly saleModel: Model<Sale>,
+  ) {}
 
-  private sales: Sale[]
-  private salesFilePath = path.join(process.cwd(), 'mockup', 'sales.ts');
-
-  constructor() {
-    this.sales = sales;
+  async createSale(createSaleDto: CreateSaleDto) {
+    try {
+      const sale = await this.saleModel.create({
+        ...createSaleDto,
+        date: new Date(createSaleDto.date),
+      });
+      return sale;
+    } catch {
+      throw new BadRequestException("Can't create Sale");
+    }
   }
 
-  private readFile(filePath: string) {
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
-    return JSON.parse(fileContent);
+  async findAll() {
+    return this.saleModel.find().exec();
   }
 
-  createSale(createSaleDto: CreateSaleDto) {
-    const sale: Sale = {
-      id: uuid(),
-      ...createSaleDto,
-      date: new Date()
-    };
-    this.sales.push(sale);
-    
-    // This will be replaced by a database connection
-    writeFile(this.salesFilePath, this.sales);
-    
-    return sale;  
+  async findOneById(_id: string) {
+    const sale = await this.saleModel.findById(_id);
+    if (!sale) {
+      throw new NotFoundException(`Sale with id '${_id}' not found.`);
+    }
+    return sale;
   }
 
-  findAll() {
-    return [...this.sales];
-  }
+  async updateSale(_id: string, updateSaleDto: UpdateSaleDto) {
+    const sale = await this.findOneById(_id);
 
-  findOneById(id: string) {
-    const product = this.sales.find((s: Sale) => s.id === id);
-    if (!product) throw new NotFoundException(`Sale with id '${id}' not found.`);
-    return product;
-  }
-
-  updateSale(id: string, updateSaleDto: UpdateSaleDto) {
-    const saleDB = this.findOneById(id);
-
-    if (updateSaleDto.id && updateSaleDto.id !== id) {
-      throw new BadRequestException('Product id is not valid inside body');
+    if (updateSaleDto.id && updateSaleDto.id !== _id) {
+      throw new BadRequestException('Sale id is not valid inside body');
     }
 
-    this.sales = this.sales.map((sale: Sale) => {
-      if (sale.id === id) {
-        const updatedProduct = { ...sale, ...updateSaleDto, id };
-        return updatedProduct;
-      }
-      
-      return sale;
-    });
+    await this.saleModel.findByIdAndUpdate(_id, updateSaleDto, { new: true });
+
+    return { ...sale.toJSON(), ...updateSaleDto };
   }
 
-  delete(id: string) {
-    const saleDB = this.findOneById(id);
-    this.sales = this.sales.filter((product: Sale) => product.id !== id);
-
-    // This will be replaced by a database connection
-    writeFile(this.salesFilePath, this.sales);
+  async deleteSale(_id: string) {
+    await this.findOneById(_id);
+    await this.saleModel.findByIdAndDelete(_id);
+    return { message: 'Sale deleted successfully.' };
   }
 
-  populateSalesWithSeedData(sales: Sale[]) {
-    this.sales = sales;
-
-    // This will be replaced by a database connection
-    writeFile(this.salesFilePath, this.sales);
+  async populateSalesWithSeedData(sales: Sale[]) {
+    if (sales.length === 0) {
+      throw new BadRequestException('No sales data provided for seeding.');
+    }
+    try {
+      await this.saleModel.insertMany(sales);
+      return { message: 'Sales data seeded successfully.' };
+    } catch (error) {
+      throw new BadRequestException(`Error seeding sales data: ${error}`);
+    }
   }
 }

@@ -1,8 +1,21 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+import { v4 as uuid } from 'uuid';
 
-export class SaleItem {
-  id: string;
+@Schema()
+export class SaleItem extends Document {
+  @Prop({ type: String, default: () => uuid() })
+  declare _id: string;
+  @Prop()
   saleId: string;
-  productId: string; 
+  @Prop()
+  productId: string;
+  @Prop()
   quantity: number;
+  @Prop()
   unitPrice: number;
 }
+
+export type SaleItemDocument = SaleItem & Document;
+
+export const SaleItemSchema = SchemaFactory.createForClass(SaleItem);

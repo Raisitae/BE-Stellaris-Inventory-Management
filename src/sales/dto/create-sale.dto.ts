@@ -1,18 +1,29 @@
-import { IsArray, IsDate, IsNumber, IsString, MinLength, ValidateNested } from "class-validator";
-import { SaleItem } from "../entities/saleItem.entity";
+import {
+  IsArray,
+  IsDate,
+  IsNumber,
+  IsString,
+  IsUUID,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
+import { SaleItem } from '../entities/saleItem.entity';
 
 export class CreateSaleDto {
-    @IsDate()
-    readonly date: Date;
+  @IsUUID()
+  uuid: string;
 
-    @IsNumber()
-    readonly total: number;
+  @IsDate()
+  readonly date: Date;
 
-    @IsString()
-    @MinLength(1)
-    readonly clientName: string;
+  @IsNumber()
+  readonly total: number;
 
-    @IsArray()
-    @ValidateNested({ each: true })
-    readonly products: SaleItem[];
+  @IsString()
+  @MinLength(1)
+  readonly clientName: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  readonly products: SaleItem[];
 }

@@ -1,98 +1,77 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import products from 'mockup/products';
-import { Product } from './interfaces/product.interface';
-import { v4 as uuid } from 'uuid';
-import * as fs from 'fs';
-import * as path from 'path';
+import { Product } from './entity/product.entity';
 import { CreateProductDto, UpdateProductDto } from './dto';
-
-/**
- * Write to file preserving the original format
- * @param productsFilePath - The path to the file to write to
- * @param products - The products to write to the file
- */
-const writeFile = (productsFilePath: string, products: Product[]) => {
-  const fileContent = `export default ${JSON.stringify(products, null, 2)};`;
-  fs.writeFileSync(productsFilePath, fileContent);
-};
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class ProductsService {
-  private products: Product[];
-  private readonly productsFilePath = path.join(
-    process.cwd(),
-    'mockup',
-    'products.ts',
-  );
+  constructor(
+    @InjectModel(Product.name)
+    private readonly productModel: Model<Product>,
+  ) {}
 
-  constructor() {
-    this.products = products as Product[];
+  async findAll() {
+    return this.productModel.find().exec();
   }
 
-  findAll() {
-    return [...this.products];
-  }
-
-  findOneById(id: string) {
-    const product = this.products.find((p: Product) => p.id === id);
-    if (!product)
-      throw new NotFoundException(`Product with id '${id}' not found.`);
+  async findOneById(_id: string) {
+    const product = await this.productModel.findById(_id);
+    if (!product) {
+      throw new NotFoundException(`Product with id '${_id}' not found.`);
+    }
     return product;
   }
 
-  createProduct(createProductDto: CreateProductDto) {
-    const product: Product = {
-      id: uuid(),
-      ...createProductDto,
-    };
-    this.products.push(product);
-
-    // This will be replaced by a database connection
-    writeFile(this.productsFilePath, this.products);
-
-    return product;
+  async createProduct(createProductDto: CreateProductDto) {
+    createProductDto.name = createProductDto.name.toLocaleLowerCase();
+    try {
+      const product = await this.productModel.create({
+        ...createProductDto,
+      });
+      return product;
+    } catch {
+      throw new InternalServerErrorException("Can't create Product");
+    }
   }
 
-  updateProduct(id: string, UpdateProductDto: UpdateProductDto) {
-    const productDB = this.findOneById(id);
-
-    if (UpdateProductDto.id && UpdateProductDto.id !== id) {
+  async updateProduct(_id: string, updateProductDto: UpdateProductDto) {
+    const product = await this.findOneById(_id);
+    if (updateProductDto.id && updateProductDto.id !== _id) {
       throw new BadRequestException('Product id is not valid inside body');
     }
 
-    this.products = this.products.map((product: Product) => {
-      if (product.id === id) {
-        const updatedProduct = { ...product, ...UpdateProductDto, id };
-        return updatedProduct;
-      }
-
-      return product;
+    await this.productModel.findByIdAndUpdate(_id, updateProductDto, {
+      new: true,
     });
 
-    // This will be replaced by a database connection
-    writeFile(this.productsFilePath, this.products);
-
-    return productDB;
+    return { ...product.toJSON(), ...updateProductDto };
   }
 
-  deleteProduct(id: string) {
-    const productDB = this.findOneById(id);
-    this.products = this.products.filter(
-      (product: Product) => product.id !== id,
-    );
-
-    // This will be replaced by a database connection
-    writeFile(this.productsFilePath, this.products);
+  async deleteProduct(_id: string) {
+    await this.findOneById(_id);
+    await this.productModel.findByIdAndDelete(_id);
+    return { message: 'Product deleted successfully' };
   }
 
-  populateProductsWithSeedData(products: Product[]) {
-    this.products = products;
+  async populateProductsWithSeedData(products: Product[]) {
+    if (products.length === 0) {
+      throw new BadRequestException('No products to seed');
+    }
 
-    // This will be replaced by a database connection
-    writeFile(this.productsFilePath, this.products);
+    try {
+      await this.productModel.deleteMany({});
+      const createdProducts = await this.productModel.insertMany(products);
+      return createdProducts;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error seeding products data: ${error}`,
+      );
+    }
   }
 }
