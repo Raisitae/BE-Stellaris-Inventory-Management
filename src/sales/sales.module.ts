@@ -7,7 +7,7 @@ import { Sale, SaleSchema } from './entities/sale.entity';
 @Module({
   controllers: [SalesController],
   providers: [SalesService],
-  exports: [SalesService],
+  exports: [MongooseModule],
   imports: [
     MongooseModule.forFeature([
       {

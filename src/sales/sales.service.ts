@@ -54,21 +54,8 @@ export class SalesService {
 
   async deleteSale(_id: string) {
     const deletedCount = await this.saleModel.deleteOne({ _id });
-    if (deletedCount.deletedCount === 0) {
+    if (deletedCount.deletedCount === 0)
       throw new NotFoundException(`Sale with id '${_id}' not found.`);
-    }
     return { message: 'Sale deleted successfully.' };
-  }
-
-  async populateSalesWithSeedData(sales: Sale[]) {
-    if (sales.length === 0) {
-      throw new BadRequestException('No sales data provided for seeding.');
-    }
-    try {
-      await this.saleModel.insertMany(sales);
-      return { message: 'Sales data seeded successfully.' };
-    } catch (error) {
-      throw new BadRequestException(`Error seeding sales data: ${error}`);
-    }
   }
 }

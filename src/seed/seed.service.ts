@@ -1,18 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { ProductsService } from 'src/products/products.service';
-import { SalesService } from 'src/sales/sales.service';
-
+import { PRODUCT_SEED } from './data/products.seed';
+import { SALES_SEED } from './data/sales.seed';
+import { PLATFORM_SEED } from './data/platforms.seed';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Product } from 'src/products/entity/product.entity';
+import { Sale } from 'src/sales/entities/sale.entity';
+import { Platform } from 'src/platform/entities/platform.entity';
 @Injectable()
 export class SeedService {
   constructor(
-    private readonly productsService: ProductsService,
-    private readonly salesService: SalesService,
+    @InjectModel('Product')
+    private readonly productModel: Model<Product>,
+    @InjectModel('Sale')
+    private readonly saleModel: Model<Sale>,
+    @InjectModel('Platform')
+    private readonly platformModel: Model<Platform>,
   ) {}
 
-  populateDB() {
-    //this.productsService.populateProductsWithSeedData(PRODUCT_SEED);
-    //this.salesService.populateSalesWithSeedData(SALES_SEED);
+  async executeSeed() {
+    const deleteArray: Promise<any>[] = [];
+    deleteArray.push(
+      this.productModel.deleteMany({}),
+      this.saleModel.deleteMany({}),
+      this.platformModel.deleteMany({}),
+    );
+    await Promise.all(deleteArray);
 
-    return 'Mockup jsons populated for Product and Sales';
+    const execArray: Promise<any>[] = [];
+    execArray.push(
+      this.productModel.insertMany(PRODUCT_SEED),
+      this.saleModel.insertMany(SALES_SEED),
+      this.platformModel.insertMany(PLATFORM_SEED),
+    );
+
+    await Promise.all(execArray);
+
+    return {
+      message: 'Seed executed successfully',
+      products: execArray ? [0].length : 0,
+      sales: execArray ? [1].length : 0,
+      platforms: execArray ? [2].length : 0,
+    };
   }
 }

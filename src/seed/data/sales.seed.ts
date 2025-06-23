@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 
-interface SaleSeed {
+export interface SaleSeed {
   _id: string;
   date: Date;
   total: number;

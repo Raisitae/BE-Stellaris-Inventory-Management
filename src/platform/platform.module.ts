@@ -7,6 +7,7 @@ import { Platform, PlatformSchema } from './entities/platform.entity';
 @Module({
   controllers: [PlatformController],
   providers: [PlatformService],
+  exports: [MongooseModule],
   imports: [
     MongooseModule.forFeature([
       {

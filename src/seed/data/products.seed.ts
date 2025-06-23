@@ -1,9 +1,21 @@
-import { Product } from 'src/products/interfaces/products.interface';
 import { v4 as uuid } from 'uuid';
 
-export const PRODUCT_SEED: Product[] = [
+export interface ProductSeed {
+  _id: string;
+  name: string;
+  price: number;
+  description: string;
+  imageUrl: string;
+  category: string;
+  platformId: string;
+  stock: number;
+  status: 'nuevo' | 'usado' | 'reacondicionado';
+  internCode: string;
+}
+
+export const PRODUCT_SEED: ProductSeed[] = [
   {
-    uuid: uuid(),
+    _id: uuid(),
     name: 'Product 1',
     price: 100,
     description: 'Description for Product 1',
@@ -15,7 +27,7 @@ export const PRODUCT_SEED: Product[] = [
     internCode: 'P1',
   },
   {
-    uuid: uuid(),
+    _id: uuid(),
     name: 'Product 2',
     price: 100,
     description: 'Description for Product 2',
@@ -27,7 +39,7 @@ export const PRODUCT_SEED: Product[] = [
     internCode: 'P2',
   },
   {
-    uuid: uuid(),
+    _id: uuid(),
     name: 'Product 3',
     price: 100,
     description: 'Description for Product 3',
@@ -39,7 +51,7 @@ export const PRODUCT_SEED: Product[] = [
     internCode: 'P3',
   },
   {
-    uuid: '1234abc',
+    _id: '1234abc',
     name: 'Product 4',
     price: 100,
     description: 'Description for Product 4',
