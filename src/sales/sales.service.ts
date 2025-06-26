@@ -7,11 +7,14 @@ import { Sale } from './entities/sale.entity';
 import { CreateSaleDto, UpdateSaleDto } from './dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { Product } from 'src/products/entity/product.entity';
 
 @Injectable()
 export class SalesService {
   private sales: Sale[];
   constructor(
+    @InjectModel('Product')
+    private readonly productModel: Model<Product>,
     @InjectModel(Sale.name)
     private readonly saleModel: Model<Sale>,
   ) {}
@@ -20,11 +23,22 @@ export class SalesService {
     try {
       const sale = await this.saleModel.create({
         ...createSaleDto,
-        date: new Date(createSaleDto.date),
+        date: new Date(),
       });
+
+      if (sale) {
+        if (createSaleDto.products && Array.isArray(createSaleDto.products)) {
+          for (const product of createSaleDto.products) {
+            await this.productModel.findOneAndUpdate(
+              { _id: product.productId },
+              { $inc: { stock: -product.quantity } },
+            );
+          }
+        }
+      }
       return sale;
-    } catch {
-      throw new BadRequestException("Can't create Sale");
+    } catch (e) {
+      throw new BadRequestException(e);
     }
   }
 
