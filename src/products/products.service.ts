@@ -8,7 +8,6 @@ import { Product } from './entity/product.entity';
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-
 @Injectable()
 export class ProductsService {
   constructor(
@@ -54,24 +53,9 @@ export class ProductsService {
   }
 
   async deleteProduct(_id: string) {
-    await this.findOneById(_id);
-    await this.productModel.findByIdAndDelete(_id);
+    const deletedCount = await this.productModel.deleteOne({ _id });
+    if (deletedCount.deletedCount === 0)
+      throw new NotFoundException(`Product with id '${_id}' not found.`);
     return { message: 'Product deleted successfully' };
-  }
-
-  async populateProductsWithSeedData(products: Product[]) {
-    if (products.length === 0) {
-      throw new BadRequestException('No products to seed');
-    }
-
-    try {
-      await this.productModel.deleteMany({});
-      const createdProducts = await this.productModel.insertMany(products);
-      return createdProducts;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        `Error seeding products data: ${error}`,
-      );
-    }
   }
 }

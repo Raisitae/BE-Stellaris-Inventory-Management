@@ -7,7 +7,7 @@ export interface PlatformSeed {
   region: string;
 }
 
-export const PRODUCT_SEED: PlatformSeed[] = [
+export const PLATFORM_SEED: PlatformSeed[] = [
   {
     _id: 'SNES',
     name: 'Super Nintendo Entertainment System',

@@ -6,13 +6,9 @@ import {
   IsIn,
   Min,
   IsPositive,
-  IsUUID,
 } from 'class-validator';
 
 export class CreateProductDto {
-  @IsUUID()
-  uuid: string;
-
   @IsString()
   @MinLength(1)
   name: string;
@@ -47,9 +43,27 @@ export class CreateProductDto {
   @Min(1)
   readonly stock: number;
 
-  @IsIn(['nuevo', 'usado', 'reacondicionado'])
-  readonly status: 'nuevo' | 'usado' | 'reacondicionado';
-
+  @IsIn([
+    'nuevo',
+    'usado',
+    'reacondicionado',
+    'loose',
+    'CIB',
+    'gameManual',
+    'gameBox',
+    'manual',
+    'box',
+  ])
+  readonly status:
+    | 'nuevo'
+    | 'usado'
+    | 'reacondicionado'
+    | 'loose'
+    | 'CIB'
+    | 'gameManual'
+    | 'gameBox'
+    | 'manual'
+    | 'box';
   @IsString()
   @MinLength(1)
   readonly internCode: string;

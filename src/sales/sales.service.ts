@@ -7,11 +7,14 @@ import { Sale } from './entities/sale.entity';
 import { CreateSaleDto, UpdateSaleDto } from './dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { Product } from 'src/products/entity/product.entity';
 
 @Injectable()
 export class SalesService {
   private sales: Sale[];
   constructor(
+    @InjectModel('Product')
+    private readonly productModel: Model<Product>,
     @InjectModel(Sale.name)
     private readonly saleModel: Model<Sale>,
   ) {}
@@ -20,11 +23,22 @@ export class SalesService {
     try {
       const sale = await this.saleModel.create({
         ...createSaleDto,
-        date: new Date(createSaleDto.date),
+        date: new Date(),
       });
+
+      if (sale) {
+        if (createSaleDto.products && Array.isArray(createSaleDto.products)) {
+          for (const product of createSaleDto.products) {
+            await this.productModel.findOneAndUpdate(
+              { _id: product.productId },
+              { $inc: { stock: -product.quantity } },
+            );
+          }
+        }
+      }
       return sale;
-    } catch {
-      throw new BadRequestException("Can't create Sale");
+    } catch (e) {
+      throw new BadRequestException(e);
     }
   }
 
@@ -53,20 +67,9 @@ export class SalesService {
   }
 
   async deleteSale(_id: string) {
-    await this.findOneById(_id);
-    await this.saleModel.findByIdAndDelete(_id);
+    const deletedCount = await this.saleModel.deleteOne({ _id });
+    if (deletedCount.deletedCount === 0)
+      throw new NotFoundException(`Sale with id '${_id}' not found.`);
     return { message: 'Sale deleted successfully.' };
-  }
-
-  async populateSalesWithSeedData(sales: Sale[]) {
-    if (sales.length === 0) {
-      throw new BadRequestException('No sales data provided for seeding.');
-    }
-    try {
-      await this.saleModel.insertMany(sales);
-      return { message: 'Sales data seeded successfully.' };
-    } catch (error) {
-      throw new BadRequestException(`Error seeding sales data: ${error}`);
-    }
   }
 }

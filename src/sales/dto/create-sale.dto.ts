@@ -2,17 +2,14 @@ import {
   IsArray,
   IsDate,
   IsNumber,
+  IsOptional,
   IsString,
-  IsUUID,
   MinLength,
-  ValidateNested,
 } from 'class-validator';
 import { SaleItem } from '../entities/saleItem.entity';
 
 export class CreateSaleDto {
-  @IsUUID()
-  uuid: string;
-
+  @IsOptional()
   @IsDate()
   readonly date: Date;
 
@@ -24,6 +21,5 @@ export class CreateSaleDto {
   readonly clientName: string;
 
   @IsArray()
-  @ValidateNested({ each: true })
   readonly products: SaleItem[];
 }
