@@ -15,7 +15,6 @@ import { AppController } from './app.controller';
     SeedModule,
     MongooseModule.forRoot(process.env.MONGODB_URI || ''),
     PlatformModule,
-    AppModule,
   ],
   controllers: [AppController],
   providers: [],
