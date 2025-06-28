@@ -4,9 +4,9 @@ import { SALES_SEED } from './data/sales.seed';
 import { PLATFORM_SEED } from './data/platforms.seed';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Product } from 'src/products/entity/product.entity';
-import { Sale } from 'src/sales/entities/sale.entity';
-import { Platform } from 'src/platform/entities/platform.entity';
+import { Product } from '../products/entity/product.entity';
+import { Sale } from '../sales/entities/sale.entity';
+import { Platform } from '../platform/entities/platform.entity';
 @Injectable()
 export class SeedService {
   constructor(

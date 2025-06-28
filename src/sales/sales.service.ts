@@ -7,7 +7,7 @@ import { Sale } from './entities/sale.entity';
 import { CreateSaleDto, UpdateSaleDto } from './dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Product } from 'src/products/entity/product.entity';
+import { Product } from '../products/entity/product.entity';
 
 @Injectable()
 export class SalesService {

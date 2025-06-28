@@ -5,6 +5,7 @@ import { SalesModule } from './sales/sales.module';
 import { SeedModule } from './seed/seed.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PlatformModule } from './platform/platform.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -14,8 +15,9 @@ import { PlatformModule } from './platform/platform.module';
     SeedModule,
     MongooseModule.forRoot(process.env.MONGODB_URI || ''),
     PlatformModule,
+    AppModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
   exports: [],
 })

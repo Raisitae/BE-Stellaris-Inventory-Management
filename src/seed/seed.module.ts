@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { SeedService } from './seed.service';
 import { SeedController } from './seed.controller';
-import { ProductsModule } from 'src/products/products.module';
-import { SalesModule } from 'src/sales/sales.module';
-import { PlatformModule } from 'src/platform/platform.module';
+import { ProductsModule } from '../products/products.module';
+import { SalesModule } from '../sales/sales.module';
+import { PlatformModule } from '../platform/platform.module';
 
 @Module({
   controllers: [SeedController],

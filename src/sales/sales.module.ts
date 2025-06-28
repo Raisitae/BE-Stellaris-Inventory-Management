@@ -3,7 +3,7 @@ import { SalesService } from './sales.service';
 import { SalesController } from './sales.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Sale, SaleSchema } from './entities/sale.entity';
-import { ProductsModule } from 'src/products/products.module';
+import { ProductsModule } from '../products/products.module';
 
 @Module({
   controllers: [SalesController],
