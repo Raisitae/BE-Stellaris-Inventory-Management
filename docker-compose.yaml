@@ -1,10 +1,19 @@
 #version: '3'
 
 services:
+  backend:
+    build: .
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    environment:
+      - MONGO_URL=mongodb://db:27017/stellaris-db
+
   db:
     image: mongo:5
     restart: always
-    ports: 
+    ports:
       - 27017:27017
     environment:
       MONGODB_DATABASE: stellaris-db
